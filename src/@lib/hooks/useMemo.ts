@@ -6,7 +6,7 @@ import { useRef } from "./useRef";
 export function useMemo<T>(
   factory: () => T,
   _deps: DependencyList,
-  _equals = shallowEquals
+  _equals = shallowEquals,
 ): T {
   const memoized = useRef<{ deps: DependencyList; result: T }[]>([]);
 
