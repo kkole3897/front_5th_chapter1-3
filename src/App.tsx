@@ -366,7 +366,6 @@ const App: React.FC = () => {
   }, []);
 
   const addItems = useCallback(() => {
-    console.log("addItems");
     setItems((prevItems) => [
       ...prevItems,
       ...generateItems(1000, prevItems.length),
