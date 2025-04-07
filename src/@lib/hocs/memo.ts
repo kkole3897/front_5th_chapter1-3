@@ -4,9 +4,9 @@ import { shallowEquals } from "../equalities";
 
 export function memo<P extends object>(
   Component: ComponentType<P>,
-  _equals = shallowEquals,
+  _equals = shallowEquals
 ) {
-  const memoized: Array<{ props: P; component: JSX.Element }> = [];
+  const memoized: Array<{ props: P; component: React.ReactElement }> = [];
 
   return (props: P) => {
     const found = memoized.find((item) => _equals(item.props, props));
