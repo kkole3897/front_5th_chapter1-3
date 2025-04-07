@@ -56,7 +56,7 @@ interface NotificationContextValue {
 }
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 const NotificationProvider: React.FC<PropsWithChildren> = ({ children }) => {
@@ -70,11 +70,11 @@ const NotificationProvider: React.FC<PropsWithChildren> = ({ children }) => {
       };
       setNotifications((prev) => [...prev, newNotification]);
     },
-    []
+    [],
   );
   const removeNotification = useCallback((id: number) => {
     setNotifications((prev) =>
-      prev.filter((notification) => notification.id !== id)
+      prev.filter((notification) => notification.id !== id),
     );
   }, []);
 
@@ -95,7 +95,7 @@ const useNotificationContext = () => {
   const context = useContext(NotificationContext);
   if (context === undefined) {
     throw new Error(
-      "useNotificationContext must be used within a NotificationProvider"
+      "useNotificationContext must be used within a NotificationProvider",
     );
   }
   return context;
@@ -118,7 +118,7 @@ const UserProvider: React.FC<PropsWithChildren> = ({ children }) => {
       setUser({ id: 1, name: "홍길동", email });
       addNotification("성공적으로 로그인되었습니다", "success");
     },
-    [addNotification]
+    [addNotification],
   );
 
   const logout = useCallback(() => {
@@ -203,7 +203,7 @@ export const ItemList: React.FC<{
   const filteredItems = items.filter(
     (item) =>
       item.name.toLowerCase().includes(filter.toLowerCase()) ||
-      item.category.toLowerCase().includes(filter.toLowerCase())
+      item.category.toLowerCase().includes(filter.toLowerCase()),
   );
 
   const totalPrice = filteredItems.reduce((sum, item) => sum + item.price, 0);

@@ -4,7 +4,7 @@ import { shallowEquals } from "../equalities";
 
 export function memo<P extends object>(
   Component: ComponentType<P>,
-  _equals = shallowEquals
+  _equals = shallowEquals,
 ) {
   const memoized: Array<{ props: P; component: React.ReactElement }> = [];
 
