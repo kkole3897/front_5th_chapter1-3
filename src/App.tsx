@@ -6,7 +6,7 @@ import React, {
 } from "react";
 
 import { generateItems, renderLog } from "./utils";
-import { useCallback, memo } from "./@lib";
+import { useCallback, useMemo } from "./@lib";
 import { ThemeProvider, useThemeContext } from "./context/ThemeContext";
 import BaseLayout from "./components/BaseLayout";
 // 타입 정의
@@ -58,11 +58,14 @@ const NotificationProvider: React.FC<PropsWithChildren> = ({ children }) => {
     );
   }, []);
 
-  const contextValue: NotificationContextValue = {
-    notifications,
-    addNotification,
-    removeNotification,
-  };
+  const contextValue: NotificationContextValue = useMemo(
+    () => ({
+      notifications,
+      addNotification,
+      removeNotification,
+    }),
+    [notifications, addNotification, removeNotification],
+  );
 
   return (
     <NotificationContext.Provider value={contextValue}>
@@ -106,11 +109,14 @@ const UserProvider: React.FC<PropsWithChildren> = ({ children }) => {
     addNotification("로그아웃되었습니다", "info");
   }, [addNotification]);
 
-  const contextValue: UserContextValue = {
-    user,
-    login,
-    logout,
-  };
+  const contextValue: UserContextValue = useMemo(
+    () => ({
+      user,
+      login,
+      logout,
+    }),
+    [user, login, logout],
+  );
 
   return (
     <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
@@ -126,7 +132,7 @@ const useUserContext = () => {
 };
 
 // Header 컴포넌트
-export const Header: React.FC = memo(() => {
+export const Header: React.FC = () => {
   renderLog("Header rendered");
   const { theme, toggleTheme } = useThemeContext();
   const { user, login, logout } = useUserContext();
@@ -169,13 +175,13 @@ export const Header: React.FC = memo(() => {
       </div>
     </header>
   );
-});
+};
 
 // ItemList 컴포넌트
 export const ItemList: React.FC<{
   items: Item[];
   onAddItemsClick: () => void;
-}> = memo(({ items, onAddItemsClick }) => {
+}> = ({ items, onAddItemsClick }) => {
   renderLog("ItemList rendered");
   const [filter, setFilter] = useState("");
   const { theme } = useThemeContext();
@@ -228,10 +234,10 @@ export const ItemList: React.FC<{
       </ul>
     </div>
   );
-});
+};
 
 // ComplexForm 컴포넌트
-export const ComplexForm: React.FC = memo(() => {
+export const ComplexForm: React.FC = () => {
   renderLog("ComplexForm rendered");
   const { addNotification } = useNotificationContext();
   const [formData, setFormData] = useState({
@@ -313,10 +319,10 @@ export const ComplexForm: React.FC = memo(() => {
       </form>
     </div>
   );
-});
+};
 
 // NotificationSystem 컴포넌트
-export const NotificationSystem: React.FC = memo(() => {
+export const NotificationSystem: React.FC = () => {
   renderLog("NotificationSystem rendered");
   const { notifications, removeNotification } = useNotificationContext();
 
@@ -346,7 +352,7 @@ export const NotificationSystem: React.FC = memo(() => {
       ))}
     </div>
   );
-});
+};
 
 // 메인 App 컴포넌트
 const App: React.FC = () => {
