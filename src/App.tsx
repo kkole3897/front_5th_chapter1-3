@@ -4,8 +4,11 @@ import React, {
   useContext,
   PropsWithChildren,
 } from "react";
+
 import { generateItems, renderLog } from "./utils";
 import { useCallback, memo } from "./@lib";
+import { ThemeProvider, useThemeContext } from "./context/ThemeContext";
+import BaseLayout from "./components/BaseLayout";
 // 타입 정의
 interface Item {
   id: number;
@@ -25,29 +28,6 @@ interface Notification {
   message: string;
   type: "info" | "success" | "warning" | "error";
 }
-
-interface ThemeContextValue {
-  theme: string;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
-
-const ThemeProvider: React.FC<
-  PropsWithChildren<{ value: ThemeContextValue }>
-> = ({ children, value }) => {
-  return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
-  );
-};
-
-const useThemeContext = () => {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useThemeContext must be used within a ThemeProvider");
-  }
-  return context;
-};
 
 interface NotificationContextValue {
   notifications: Notification[];
@@ -370,12 +350,7 @@ export const NotificationSystem: React.FC = memo(() => {
 
 // 메인 App 컴포넌트
 const App: React.FC = () => {
-  const [theme, setTheme] = useState("light");
   const [items, setItems] = useState(generateItems(1000));
-
-  const toggleTheme = useCallback(() => {
-    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
-  }, []);
 
   const addItems = useCallback(() => {
     setItems((prevItems) => [
@@ -384,18 +359,11 @@ const App: React.FC = () => {
     ]);
   }, []);
 
-  const themeValue: ThemeContextValue = {
-    theme,
-    toggleTheme,
-  };
-
   return (
-    <ThemeProvider value={themeValue}>
+    <ThemeProvider>
       <NotificationProvider>
         <UserProvider>
-          <div
-            className={`min-h-screen ${theme === "light" ? "bg-gray-100" : "bg-gray-900 text-white"}`}
-          >
+          <BaseLayout>
             <Header />
             <div className="container mx-auto px-4 py-8">
               <div className="flex flex-col md:flex-row">
@@ -408,7 +376,7 @@ const App: React.FC = () => {
               </div>
             </div>
             <NotificationSystem />
-          </div>
+          </BaseLayout>
         </UserProvider>
       </NotificationProvider>
     </ThemeProvider>
