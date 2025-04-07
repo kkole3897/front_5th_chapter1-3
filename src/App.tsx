@@ -6,7 +6,7 @@ import React, {
 } from "react";
 
 import { generateItems, renderLog } from "./utils";
-import { useCallback, useMemo } from "./@lib";
+import { memo, useCallback, useMemo } from "./@lib";
 import { ThemeProvider, useThemeContext } from "./context/ThemeContext";
 import BaseLayout from "./components/BaseLayout";
 // 타입 정의
@@ -132,7 +132,7 @@ const useUserContext = () => {
 };
 
 // Header 컴포넌트
-export const Header: React.FC = () => {
+export const Header: React.FC = memo(() => {
   renderLog("Header rendered");
   const { theme, toggleTheme } = useThemeContext();
   const { user, login, logout } = useUserContext();
@@ -175,13 +175,13 @@ export const Header: React.FC = () => {
       </div>
     </header>
   );
-};
+});
 
 // ItemList 컴포넌트
 export const ItemList: React.FC<{
   items: Item[];
   onAddItemsClick: () => void;
-}> = ({ items, onAddItemsClick }) => {
+}> = memo(({ items, onAddItemsClick }) => {
   renderLog("ItemList rendered");
   const [filter, setFilter] = useState("");
   const { theme } = useThemeContext();
@@ -234,10 +234,10 @@ export const ItemList: React.FC<{
       </ul>
     </div>
   );
-};
+});
 
 // ComplexForm 컴포넌트
-export const ComplexForm: React.FC = () => {
+export const ComplexForm: React.FC = memo(() => {
   renderLog("ComplexForm rendered");
   const { addNotification } = useNotificationContext();
   const [formData, setFormData] = useState({
@@ -319,10 +319,10 @@ export const ComplexForm: React.FC = () => {
       </form>
     </div>
   );
-};
+});
 
 // NotificationSystem 컴포넌트
-export const NotificationSystem: React.FC = () => {
+export const NotificationSystem: React.FC = memo(() => {
   renderLog("NotificationSystem rendered");
   const { notifications, removeNotification } = useNotificationContext();
 
@@ -352,21 +352,37 @@ export const NotificationSystem: React.FC = () => {
       ))}
     </div>
   );
-};
+});
 
 // 메인 App 컴포넌트
 const App: React.FC = () => {
-  const [items, setItems] = useState(generateItems(1000));
+  const initialItems = useMemo(() => generateItems(1000), []);
+
+  const [items, setItems] = useState(initialItems);
+  const [theme, setTheme] = useState("light");
+
+  const toggleTheme = useCallback(() => {
+    setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
+  }, []);
 
   const addItems = useCallback(() => {
+    console.log("addItems");
     setItems((prevItems) => [
       ...prevItems,
       ...generateItems(1000, prevItems.length),
     ]);
   }, []);
 
+  const themeContextValue = useMemo(
+    () => ({
+      theme,
+      toggleTheme,
+    }),
+    [theme, toggleTheme],
+  );
+
   return (
-    <ThemeProvider>
+    <ThemeProvider value={themeContextValue}>
       <NotificationProvider>
         <UserProvider>
           <BaseLayout>
