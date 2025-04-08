@@ -8,17 +8,15 @@ export function useMemo<T>(
   _deps: DependencyList,
   _equals = shallowEquals,
 ): T {
-  const memoized = useRef<{ deps: DependencyList; result: T }[]>([]);
+  const memoized = useRef<{ deps: DependencyList; result: T } | null>(null);
 
-  const found = memoized.current.find((item) => _equals(item.deps, _deps));
-
-  if (found) {
-    return found.result;
+  if (memoized.current && _equals(memoized.current.deps, _deps)) {
+    return memoized.current.result;
   }
 
   const result = factory();
 
-  memoized.current.push({ deps: _deps, result });
+  memoized.current = { deps: _deps, result };
 
   return result;
 }

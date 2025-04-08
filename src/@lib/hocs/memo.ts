@@ -6,18 +6,17 @@ export function memo<P extends object>(
   Component: ComponentType<P>,
   _equals = shallowEquals,
 ) {
-  const memoized: Array<{ props: P; component: React.ReactElement }> = [];
+  let memoized: { props: P; element: React.ReactElement } | null = null;
 
   return (props: P) => {
-    const found = memoized.find((item) => _equals(item.props, props));
-    if (found) {
-      return found.component;
+    if (memoized && _equals(memoized.props, props)) {
+      return memoized.element;
     }
 
-    const component = createElement(Component, props);
+    const element = createElement(Component, props);
 
-    memoized.push({ props, component });
+    memoized = { props, element };
 
-    return component;
+    return element;
   };
 }
