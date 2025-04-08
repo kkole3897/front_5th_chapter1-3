@@ -8,7 +8,7 @@ import React, {
 import { generateItems, renderLog } from "./utils";
 import { memo, useCallback, useMemo } from "./@lib";
 import { ThemeProvider, useThemeContext } from "./context/ThemeContext";
-import BaseLayout from "./components/BaseLayout";
+
 // 타입 정의
 interface Item {
   id: number;
@@ -384,7 +384,9 @@ const App: React.FC = () => {
     <ThemeProvider value={themeContextValue}>
       <NotificationProvider>
         <UserProvider>
-          <BaseLayout>
+          <div
+            className={`min-h-screen ${theme === "light" ? "bg-gray-100" : "bg-gray-900 text-white"}`}
+          >
             <Header />
             <div className="container mx-auto px-4 py-8">
               <div className="flex flex-col md:flex-row">
@@ -397,7 +399,7 @@ const App: React.FC = () => {
               </div>
             </div>
             <NotificationSystem />
-          </BaseLayout>
+          </div>
         </UserProvider>
       </NotificationProvider>
     </ThemeProvider>
